@@ -1,108 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 9</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lab 9</title>
+    <style>
+      button {
+        margin: 3px;
+      }
 
-  <style>
-    button {
-      margin: 3px;
-    }
+      button:hover {
+        cursor: pointer;
+      }
 
-    button:hover {
-      cursor: pointer;
-    }
+      #first-num,
+      #second-num {
+        width: 60px;
+      }
 
-    #first-num,
-    #second-num {
-      width: 60px;
-    }
+      output {
+        border: 1px solid gray;
+        display: block;
+        height: 18px;
+        margin-top: 5px;
+        padding: 5px;
+        width: 240px;
+      }
 
-    output {
-      border: 1px solid gray;
-      display: block;
-      height: 18px;
-      margin-top: 5px;
-      padding: 5px;
-      width: 240px;
-    }
+      main {
+        width: 800px;
+      }
 
-    main {
-      width: 800px;
-    }
+      #error-btns {
+        column-gap: 5px;
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 30px;
+        row-gap: 5px;
+      }
 
-    #error-btns {
-      column-gap: 5px;
-      display: flex;
-      flex-wrap: wrap;
-      margin-top: 30px;
-      row-gap: 5px;
-    }
+      #error-btns > * {
+        padding: 8px 2px;
+        width: 122px;
+      }
+    </style>
+  </head>
 
-    #error-btns>* {
-      padding: 8px 2px;
-      width: 122px;
-    }
-  </style>
-</head>
+  <body>
+    <main>
+      <form>
+        <fieldset>
+          <legend>Error Calculator</legend>
+          <input name="first-num" id="first-num" />
+          <select name="operator" id="operator">
+            <option>+</option>
+            <option>-</option>
+            <option>*</option>
+            <option>/</option>
+          </select>
+          <input name="second-num" id="second-num" />
+          <button id="calculate">Calculate</button>
+          <br />
+          <output></output>
+        </fieldset>
+      </form>
 
-<body>
-  <main>
-    <form>
-      <fieldset>
-        <legend>Error Calculator</legend>
-        <input name="first-num" id="first-num" />
-        <select name="operator" id="operator">
-          <option>+</option>
-          <option>-</option>
-          <option>*</option>
-          <option>/</option>
-        </select>
-        <input name="second-num" id="second-num" />
-        <button id="calculate">Calculate</button>
-        <br />
-        <output></output>
-      </fieldset>
-    </form>
+      <section id="error-btns">
+        <button id="console-log">Console Log</button>
+        <button id="console-error">Console Error</button>
+        <button id="console-count">Console Count</button>
+        <button id="console-warn">Console Warn</button>
+        <button id="console-assert">Console Assert</button>
+        <button id="console-clear">Console Clear</button>
+        <button id="console-dir">Console Dir</button>
+        <button id="console-dirxml">Console dirxml</button>
+        <button id="console-group-start">Console Group Start</button>
+        <button id="console-group-end">Console Group End</button>
+        <button id="console-table">Console Table</button>
+        <button id="start-timer">Start Timer</button>
+        <button id="end-timer">End Timer</button>
+        <button id="console-trace">Console Trace</button>
+        <button id="global-error">Trigger a Global Error</button>
+      </section>
+    </main>
 
-    <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
-    </section>
-  </main>
+    <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+    <script>
+      window.TrackJS &&
+        TrackJS.install({
+          token: "a58662298c924564bdb18b9d3a99ca1c",
+          // for more configuration options, see https://docs.trackjs.com
+        });
+    </script>
+    <script>
+      window.onerror = (message, source, lineNum, colNum, error) => {
+        console.log("Global error occurred");
+        TrackJS.track(error);
+        return true;
+      };
 
-  <script>
-    let form = document.querySelector('form');
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
-    });
+      class NotNumberError extends Error {
+        constructor(message) {
+          super(message);
+          this.name = "NotNumberError";
+        }
+      }
 
-    let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+      let form = document.querySelector("form");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        let output = document.querySelector("output");
+        let firstNum = document.querySelector("#first-num").value;
+        let secondNum = document.querySelector("#second-num").value;
+        let operator = document.querySelector("#operator").value;
+        let result;
+        try {
+          result = eval(`${firstNum} ${operator} ${secondNum}`);
 
-    // Start your code here
-    // You may move this JS to another file if you wish
-  </script>
-</body>
+          if (typeof result !== "number") {
+            let message = result + " is not a number";
+            throw new NotNumberError(message);
+          }
+        } catch (error) {
+          if (error instanceof NotNumberError) {
+            console.error(error);
+          } else {
+            throw error;
+          }
+        } finally {
+          output.innerHTML = result;
+        }
+      });
 
+      let errorBtns = Array.from(
+        document.querySelectorAll("#error-btns > button")
+      );
+
+      let consoleLog = document.getElementById("console-log");
+      consoleLog.addEventListener("click", () => {
+        console.log("Hello, World!");
+      });
+
+      let consoleError = document.getElementById("console-error");
+      consoleError.addEventListener("click", () => {
+        console.error("An error has occurred");
+      });
+
+      let consoleCount = document.getElementById("console-count");
+      consoleCount.addEventListener("click", () => {
+        console.count("Counter");
+      });
+
+      let consoleWarn = document.getElementById("console-warn");
+      consoleWarn.addEventListener("click", () => {
+        console.warn("Warning: your code is bad");
+      });
+
+      let consoleAssert = document.getElementById("console-assert");
+      consoleAssert.addEventListener("click", () => {
+        const x = 1;
+        const reason = "x is not equal to 0";
+        console.assert(x === 0, { reason, x });
+      });
+
+      let consoleClear = document.getElementById("console-clear");
+      consoleClear.addEventListener("click", () => {
+        console.clear();
+      });
+
+      let consoleDir = document.getElementById("console-dir");
+      consoleDir.addEventListener("click", () => {
+        console.dir(document.querySelector("body"));
+      });
+
+      let consoleDirxml = document.getElementById("console-dirxml");
+      consoleDirxml.addEventListener("click", () => {
+        console.dirxml(document.querySelector("body"));
+      });
+
+      let consoleGroupStart = document.getElementById("console-group-start");
+      consoleGroupStart.addEventListener("click", () => {
+        console.group("Logging group");
+      });
+
+      let consoleGroupEnd = document.getElementById("console-group-end");
+      consoleGroupEnd.addEventListener("click", () => {
+        console.groupEnd("Logging group");
+      });
+
+      let consoleTable = document.getElementById("console-table");
+      consoleTable.addEventListener("click", () => {
+        const logs = [];
+        logs.push("dry log");
+        logs.push("wet log");
+        logs.push("dead log");
+        console.table(logs);
+      });
+
+      let startTimer = document.getElementById("start-timer");
+      startTimer.addEventListener("click", () => {
+        console.time("Timer");
+      });
+
+      let endTimer = document.getElementById("end-timer");
+      endTimer.addEventListener("click", () => {
+        console.timeEnd("Timer");
+      });
+
+      let consoleTrace = document.getElementById("console-trace");
+      consoleTrace.addEventListener("click", () => {
+        const func2 = () => {
+          console.trace();
+        };
+        const func1 = () => {
+          func2();
+        };
+
+        func1();
+      });
+
+      let globalError = document.getElementById("global-error");
+      globalError.addEventListener("click", () => {
+        document.getElementById("fake-id").shadowRoot;
+      });
+    </script>
+  </body>
 </html>
